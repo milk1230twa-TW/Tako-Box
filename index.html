@@ -1,140 +1,373 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>我的咒語收納區</title>
-  <!-- 引入 SweetAlert2 讓彈出視窗變漂亮 -->
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <style>
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #f7f9fc; margin: 0; padding: 15px; color: #333; }
-    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 10px; background: white; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-    h2 { margin: 0; font-size: 1.2rem; color: #2c3e50; }
-    .btn-add { background: #4CAF50; color: white; border: none; padding: 8px 15px; border-radius: 20px; font-weight: bold; cursor: pointer; font-size: 0.9rem; }
-    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100%, 1fr)); gap: 15px; }
-    .card { background: white; padding: 15px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.04); position: relative; }
-    .card-title { font-size: 1.1rem; font-weight: bold; margin-bottom: 8px; padding-right: 60px; color: #2c3e50; }
-    .card-category { font-size: 0.75rem; background: #e3f2fd; color: #1976d2; padding: 4px 8px; border-radius: 12px; position: absolute; right: 15px; top: 15px; }
-    .card-content { background: #f8f9fa; padding: 10px; border-radius: 8px; font-size: 0.9rem; color: #555; white-space: pre-wrap; margin-bottom: 10px; max-height: 120px; overflow-y: auto; border: 1px solid #eee; }
-    .btn-copy { width: 100%; background: #e3f2fd; color: #1976d2; border: none; padding: 10px; border-radius: 8px; font-weight: bold; font-size: 0.9rem; cursor: pointer; }
-    .loading-text { text-align: center; color: #888; margin-top: 50px; font-weight: bold; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>咒語收納區</title>
+    
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text x=%2210%22 y=%2280%22 font-size=%2270%22>📦</text><text x=%2235%22 y=%2260%22 font-size=%2250%22>🐙</text></svg>">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text x=%2210%22 y=%2280%22 font-size=%2270%22>📦</text><text x=%2235%22 y=%2260%22 font-size=%2250%22>🐙</text></svg>">
+
+    <style>
+        :root{--bg:#1a1a1a;--text:#e0e0e0;--card-bg:#262626;--input-bg:#333333;--card-text:#ccc;--title-color:#fff;--border-color:#444;--card-body-bg:#1f1f1f;--main-font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;--font-modifier:0px}[data-theme="light"]{--bg:#f4f6f9;--text:#2c3e50;--card-bg:#ffffff;--input-bg:#ffffff;--card-text:#4a5568;--title-color:#1a202c;--border-color:#cbd5e1;--card-body-bg:#f8fafc}[data-theme="terminal"]{--bg:#050505;--text:#0f0;--card-bg:#0a110a;--input-bg:#001a00;--card-text:#3c3;--title-color:#0f0;--border-color:#004400;--card-body-bg:#050505;--main-font:"Courier New",Courier,monospace}[data-theme="neon"]{--bg:#0b0914;--text:#0ff;--card-bg:#161224;--input-bg:#1f1933;--card-text:#ff007f;--title-color:#f9a826;--border-color:#ff007f;--card-body-bg:#0b0914;--main-font:"Trebuchet MS",sans-serif}[data-theme="vintage"]{--bg:#f4ecd8;--text:#4a3c31;--card-bg:#fffbf0;--input-bg:#eaddc5;--card-text:#5c4a3d;--title-color:#2c1e16;--border-color:#d3c4a9;--card-body-bg:#fdf8e8;--main-font:"Georgia",serif}[data-theme="forest"]{--bg:#1c2623;--text:#cbd5e1;--card-bg:#263631;--input-bg:#2d3f3a;--card-text:#94a3b8;--title-color:#86efac;--border-color:#2d3f3a;--card-body-bg:#161f1c}[data-theme="ocean"]{--bg:#091221;--text:#e2e8f0;--card-bg:#152238;--input-bg:#1e3252;--card-text:#9fa8da;--title-color:#4ade80;--border-color:#1e3252;--card-body-bg:#091221}[data-theme="crimson"]{--bg:#240a0a;--text:#fed7aa;--card-bg:#3a1111;--input-bg:#4f1717;--card-text:#fdba74;--title-color:#fbbf24;--border-color:#7f1d1d;--card-body-bg:#1c0606}[data-theme="sakura"]{--bg:#fff0f5;--text:#594a4e;--card-bg:#ffffff;--input-bg:#ffe4e1;--card-text:#7a6369;--title-color:#be185d;--border-color:#fbcfe8;--card-body-bg:#fffafa}[data-theme="amber"]{--bg:#261910;--text:#e7d8c9;--card-bg:#3d281a;--input-bg:#4f3422;--card-text:#d4a373;--title-color:#f4a261;--border-color:#5c3d26;--card-body-bg:#1f140d}[data-theme="nebula"]{--bg:#160d24;--text:#d8b4e2;--card-bg:#26173d;--input-bg:#362254;--card-text:#c092d6;--title-color:#e879f9;--border-color:#4c2f75;--card-body-bg:#120a1f}[data-theme="glacier"]{--bg:#e0f2fe;--text:#1e3a8a;--card-bg:#ffffff;--input-bg:#bae6fd;--card-text:#3b82f6;--title-color:#0369a1;--border-color:#7dd3fc;--card-body-bg:#f0f9ff}[data-theme="slate"]{--bg:#0f172a;--text:#e2e8f0;--card-bg:#1e293b;--input-bg:#334155;--card-text:#94a3b8;--title-color:#38bdf8;--border-color:#475569;--card-body-bg:#0f172a}[data-theme="mint"]{--bg:#f0fdf4;--text:#064e3b;--card-bg:#ffffff;--input-bg:#dcfce7;--card-text:#166534;--title-color:#047857;--border-color:#bbf7d0;--card-body-bg:#f8fafc}[data-theme="night_blood"]{--bg:#120404;--text:#e2e8f0;--card-bg:#2d0a0a;--input-bg:#3f0f0f;--card-text:#cbd5e1;--title-color:#fca5a5;--border-color:#7f1d1d;--card-body-bg:#1a0505}[data-theme="silver"]{--bg:#e2e8f0;--text:#334155;--card-bg:#f8fafc;--input-bg:#ffffff;--card-text:#475569;--title-color:#0f172a;--border-color:#cbd5e1;--card-body-bg:#f1f5f9}[data-theme="peach"]{--bg:#ffedd5;--text:#431407;--card-bg:#fff7ed;--input-bg:#ffedcf;--card-text:#7c2d12;--title-color:#9a3412;--border-color:#fdba74;--card-body-bg:#fffaf5}[data-theme="dusk_tea"]{--bg:#262220;--text:#dcd6d0;--card-bg:#332e2b;--input-bg:#423c38;--card-text:#c7beba;--title-color:#d4b29c;--border-color:#524a45;--card-body-bg:#211d1b}[data-theme="misty_purple"]{--bg:#1b1924;--text:#d4d2de;--card-bg:#262333;--input-bg:#343044;--card-text:#b8b4cc;--title-color:#b19ffb;--border-color:#443f57;--card-body-bg:#16141d}[data-theme="oat_milk"]{--bg:#f5f2eb;--text:#4a453e;--card-bg:#ffffff;--input-bg:#eae4d9;--card-text:#5c554c;--title-color:#8c6d53;--border-color:#d9d0c1;--card-body-bg:#faf8f5}
+        body{font-family:var(--main-font);background-color:var(--bg);color:var(--text);margin:0;padding:15px;padding-bottom:60px;transition:background .3s,color .3s,font-family .3s;font-size:calc(16px + var(--font-modifier))}
+        h1{text-align:center;color:var(--title-color);font-size:calc(24px + var(--font-modifier));margin-bottom:5px;letter-spacing:2px}
+        .control-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;background-color:var(--card-bg);padding:8px 12px;border-radius:8px;border:1px solid var(--border-color)}
+        .font-ctrl{display:flex;align-items:center;gap:5px;font-size:calc(14px + var(--font-modifier))}
+        .ctrl-btn{background-color:var(--input-bg);color:var(--text);border:1px solid var(--border-color);padding:6px 12px;border-radius:6px;cursor:pointer;font-weight:bold}
+        .global-stats{text-align:center;color:var(--text);opacity:.7;font-size:calc(14px + var(--font-modifier));margin-bottom:15px;letter-spacing:1px}
+        .tool-bar{display:flex;flex-direction:column;gap:10px;margin-bottom:10px}
+        .search-input{width:100%;padding:12px;background-color:var(--card-bg);border:1px solid var(--border-color);border-radius:8px;color:var(--text);font-size:calc(15px + var(--font-modifier));box-sizing:border-box}
+        .action-btns-row{display:flex;gap:8px;width:100%}
+        .action-nav-btn{flex:1;display:flex;justify-content:center;align-items:center;background-color:#4361ee;color:#fff;border:none;height:44px;border-radius:8px;font-weight:bold;cursor:pointer;font-size:calc(14px + var(--font-modifier));white-space:nowrap}
+        .fav-filter-btn{background-color:var(--card-bg);color:#ffb703;border:1px solid #ffb703} .fav-filter-btn.active{background-color:#ffb703;color:#000}
+        .ranking-filter-btn{background-color:var(--card-bg);color:#ff3366;border:1px solid #ff3366} .ranking-filter-btn.active{background-color:#ff3366;color:#fff}
+        .draw-card-btn{background:linear-gradient(145deg,#2b2b2b 0,#111 100%);color:#ffd700;border:1px solid #c5a059;box-shadow:0 4px 15px rgba(197,160,89,.25);text-shadow:0 1px 2px rgba(0,0,0,.8);transition:all .3s ease;position:relative;overflow:hidden}
+        .draw-card-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(197,160,89,.4);background:linear-gradient(145deg,#3a3a3a 0,#1a1a1a 100%)}
+        .keyword-suggestions{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:15px;min-height:28px;width:100%}
+        .kw-chip{background-color:var(--input-bg);border:1px solid var(--border-color);padding:4px 10px;border-radius:15px;cursor:pointer;color:#219ebc}
+        .sticky-nav{position:sticky;top:0;background-color:var(--bg);padding:10px 0;margin-bottom:15px;z-index:99;display:flex;gap:10px;border-bottom:1px solid var(--border-color)}
+        .nav-tab{flex:1;background-color:var(--card-bg);color:var(--text);border:1px solid var(--border-color);padding:10px;border-radius:8px;font-weight:bold;cursor:pointer;text-align:center}
+        h2{font-size:calc(18px + var(--font-modifier));border-bottom:2px solid var(--border-color);padding-bottom:8px;margin-top:25px;color:#ffb703;display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none}
+        .story-title{color:#ffb703;font-weight:bold;} .template-title{color:#219ebc;font-weight:bold;} .ranking-title{color:#ff3366;font-weight:bold;}
+        .category-count{color:#ffb703;font-weight:bold;}
+        .input-area,.del-btn,.edit-btn{display:none} body.admin-mode .input-area,body.admin-mode .del-btn,body.admin-mode .edit-btn{display:block} body.admin-mode .login-box{display:none}
+        .input-area{background-color:var(--card-bg);border-radius:12px;padding:15px;margin-bottom:20px;border:1px solid #fb8500}
+        .admin-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;border-bottom:1px solid var(--border-color);padding-bottom:8px}
+        .logout-btn{background-color:#ff4d4d;color:#fff;border:none;padding:6px 12px;border-radius:6px;cursor:pointer;font-weight:bold}
+        .input-group{margin-bottom:12px} .input-group input,.input-group select,.input-group textarea{width:100%;padding:10px;background-color:var(--input-bg);border:1px solid var(--border-color);border-radius:6px;color:var(--text);box-sizing:border-box}
+        .btn-group{display:flex;gap:10px} .add-btn{flex:1;background-color:#fb8500;color:#fff;border:none;padding:12px;border-radius:6px;font-weight:bold;cursor:pointer}
+        .login-box{margin-top:40px;padding:25px 15px;background-color:var(--card-bg);border-radius:12px;text-align:center;border:1px solid var(--border-color);display:flex;flex-direction:column;gap:15px;align-items:center;box-sizing:border-box}
+        .login-box input{padding:12px;border-radius:6px;width:100%;max-width:250px;text-align:center;box-sizing:border-box;border:1px solid var(--border-color);background-color:var(--input-bg);color:var(--text)} 
+        .login-box button{padding:12px 20px;background-color:#fb8500;color:#fff;border:none;border-radius:6px;cursor:pointer;width:100%;max-width:250px;font-weight:bold;font-size:16px}
+        .status-text{margin-top:5px;color:#ffb703;font-size:13px;letter-spacing:1px}
+        #normal-view-container,#ranking-view-container{width:100%} .card-list{display:flex;flex-direction:column;gap:15px}
+        
+        .card{background-color:var(--card-bg);border-radius:10px;overflow:hidden;border:1px solid var(--border-color);border-left:4px solid #ffb703;position:relative}
+        .card.template-card{border-left-color:#219ebc} 
+        .card.ranking-card{border-left-color:#ff3366}
+        
+        .card-header{display:flex;justify-content:space-between;align-items:center;padding:15px;padding-top:22px;cursor:pointer}
+        .card-title{font-weight:bold;font-size:calc(17px + var(--font-modifier));display:flex;align-items:center;gap:8px;flex:1;min-width:0} 
+        .card-title span.text{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+        
+        .card .arrow{display:inline-block;transition:transform .2s ease;margin-right:2px;opacity:0.7;}
+
+        .rank-badge{position:absolute;top:-1px;left:10px;background:#ff3366;color:#fff;font-size:11px;font-weight:bold;padding:4px 10px;border-radius:0 0 8px 8px;z-index:2;box-shadow:0 4px 10px rgba(255,51,102,.4)}
+        
+        .stats-icons{display:flex;gap:12px;align-items:center;margin-left:auto;font-size:calc(13px + var(--font-modifier));font-weight:bold}
+        .stats-icons span{display:flex;align-items:center;gap:4px;cursor:pointer;transition:transform .1s;user-select:none}
+        .stats-icons span:active{transform:scale(0.9)}
+        .like-btn{color:#ff3366} 
+        .fav-star{color:#ffb703} 
+
+        .right-btns{display:flex;gap:5px;margin-left:10px}
+        .card-body{display:none;padding:0 15px 15px 15px;border-top:1px solid var(--border-color);background-color:var(--card-body-bg)}
+        .card-content{background-color:var(--bg);padding:12px;border-radius:6px;white-space:pre-wrap;line-height:1.5;margin-top:12px;margin-bottom:12px;color:var(--card-text);border:1px solid var(--border-color)}
+        mark{background-color:#ffb703;color:#000;padding:0 2px;border-radius:3px}
+        .card-actions{display:flex;gap:8px;flex-wrap:wrap} .action-btn{flex:1;min-width:100px;padding:10px;border:none;border-radius:6px;font-weight:bold;cursor:pointer;letter-spacing:1px}
+        .btn-link{background-color:#4a4a4a;color:#fff} .btn-copy{background-color:#023e8a;color:#fff} .btn-export{background-color:#9b5de5;color:#fff}
+        #back-to-top{position:fixed;bottom:20px;right:20px;background-color:#219ebc;color:#fff;border:none;border-radius:50%;width:45px;height:45px;font-size:20px;cursor:pointer;display:none;justify-content:center;align-items:center;z-index:1000}
+        #clear-search-btn-float{position:fixed;bottom:25px;left:50%;transform:translateX(-50%);background-color:#e63946;color:#fff;border:none;padding:12px 28px;border-radius:30px;font-size:calc(15px + var(--font-modifier));font-weight:bold;box-shadow:0 6px 20px rgba(230,57,70,.4);cursor:pointer;z-index:1000;display:none;letter-spacing:1px}
+        .modal-overlay{position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,.85);backdrop-filter:blur(8px);display:none;justify-content:center;align-items:center;z-index:2000;padding:10px;box-sizing:border-box}
+        .modal-container{background:var(--card-bg);border:1px solid var(--border-color);border-radius:24px;width:100%;max-width:500px;box-shadow:0 20px 50px rgba(0,0,0,.6);display:flex;flex-direction:column;overflow:hidden}
+        .modal-header{display:flex;justify-content:space-between;align-items:center;padding:15px 20px;border-bottom:1px solid var(--border-color);background:var(--bg)}
+        .modal-header h3{margin:0;color:#ffb703;font-size:16px;letter-spacing:1px} .close-modal-btn{background:none;border:none;color:var(--text);font-size:22px;cursor:pointer;opacity:.7}
+        .modal-body{padding:15px;display:flex;flex-direction:column;align-items:center;background:#111;gap:12px;overflow:hidden}
+        .modal-ctrl-row{display:flex;width:100%;gap:8px} .modal-select{flex:1;padding:8px;background:var(--input-bg);border:1px solid var(--border-color);border-radius:8px;color:var(--text);font-size:14px}
+        .modal-shuffle-btn{background:#34495e;color:#fff;border:none;padding:0 12px;border-radius:8px;cursor:pointer;font-size:14px;font-weight:bold}
+        .preview-scale-container{width:100%;display:flex;justify-content:center;align-items:flex-start;overflow:hidden;border-radius:20px;transition:height .25s ease}
+        .preview-card-wrapper{width:450px;transform-origin:top center;transition:transform .2s ease;padding:30px;box-sizing:border-box;box-shadow:0 10px 30px rgba(0,0,0,.5);margin:0}
+        .preview-content-scroll{max-height:35vh;overflow-y:auto;padding-right:5px} .preview-content-scroll::-webkit-scrollbar{width:4px} .preview-content-scroll::-webkit-scrollbar-thumb{background:rgba(0,0,0,.15);border-radius:4px}
+        .modal-footer{padding:12px 20px;border-top:1px solid var(--border-color);display:flex;gap:10px;background:var(--bg)}
+        .btn-home-ranking {width: 100%; padding: 12px; background-color: #e63946; color: white; border: none; border-radius: 8px; font-weight: bold; font-size: calc(15px + var(--font-modifier)); cursor: pointer; margin-bottom: 10px; box-shadow: 0 4px 10px rgba(230,57,70,0.3); letter-spacing: 1px;}
+    </style>
 </head>
 <body>
+    <h1>✦ 咒語收納區 ✦</h1>
+    <div class="control-bar">
+        <button class="ctrl-btn" id="theme-btn" onclick="cycleTheme()">曜石純黑</button>
+        <div class="font-ctrl">
+            <span>字體：</span>
+            <button class="ctrl-btn" onclick="changeFontSize('small')">A-</button>
+            <button class="ctrl-btn" onclick="changeFontSize('medium')">標準</button>
+            <button class="ctrl-btn" onclick="changeFontSize('large')">A+</button>
+        </div>
+    </div>
+    <div class="global-stats" id="global-count">⟳ 全站加載中...</div>
+    <div class="tool-bar">
+        <input type="text" id="search-box" class="search-input" placeholder="⌕ 搜尋關鍵字..." oninput="searchPrompts()">
+        <div class="action-btns-row">
+            <button class="action-nav-btn ranking-filter-btn" id="ranking-toggle-btn" onclick="toggleRankingView()">⟡ 排行榜</button>
+            <button class="action-nav-btn fav-filter-btn" id="fav-toggle-btn" onclick="toggleFavView()">★ 收藏</button>
+            <button class="action-nav-btn draw-card-btn" onclick="openDrawModal(true)">✧ 隨機抽卡</button>
+        </div>
+    </div>
+    <div class="keyword-suggestions" id="keyword-container"><span class="kw-label">❖ 推薦：</span></div>
 
-  <div class="header">
-    <h2>✨ 咒語收納區</h2>
-    <button class="btn-add" onclick="showAddModal()">+ 新增</button>
-  </div>
+    <!-- 管理員編輯面板 -->
+    <div class="input-area">
+        <div class="admin-header"><div class="admin-badge" id="admin-stat-title">❖ 管理員編輯面板</div><button class="logout-btn" onclick="logout()">⏏ 登出</button></div>
+        <div class="input-group"><label>分類</label><select id="category"><option value="story">▶ 劇情區</option><option value="template">▶ 模板區</option></select></div>
+        <div class="input-group"><label>咒語名稱</label><input type="text" id="title" placeholder="例如：小說大綱生成器"></div>
+        <div class="input-group"><label>連結（選填）</label><input type="text" id="link" placeholder="https://..."></div>
+        <div class="input-group"><label>咒語內容</label><textarea id="content" rows="4" placeholder="請在此貼上你的咒語..."></textarea></div>
+        <div class="btn-group"><button class="add-btn" id="submit-btn" onclick="handleSubmit()">＋ 新增咒語</button><button class="cancel-edit-btn" id="cancel-btn" onclick="cancelEdit()">取消修改</button></div>
+    </div>
 
-  <div id="loading" class="loading-text">🚀 正在從後端極速載入資料...</div>
-  <div class="grid" id="promptGrid"></div>
+    <!-- 標準模式 -->
+    <div id="normal-view-container">
+        <div class="sticky-nav" id="main-nav">
+            <button class="nav-tab" onclick="jumpToCategory('story')">◧ 劇情區</button>
+            <button class="nav-tab" onclick="jumpToCategory('template')">◨ 模板區</button>
+        </div>
+        <h2 id="heading-story" onclick="toggleCategory('story', this)">
+            <span class="story-title"><span class="cat-folder" id="story-folder">▾</span> 劇情區</span><span class="category-count" id="story-count">(0)</span>
+        </h2>
+        <div id="story-list" class="card-list"></div>
+        <h2 id="heading-template" onclick="toggleCategory('template', this)">
+            <span class="template-title"><span class="cat-folder" id="template-folder">▾</span> 模板區</span><span class="category-count" id="template-count">(0)</span>
+        </h2>
+        <div id="template-list" class="card-list"></div>
+    </div>
 
-  <script>
-    // 這裡就是妳剛剛生成的專屬 API 網址！
-    const API_URL = "https://script.google.com/macros/s/AKfycby8ilWo8uTVumIH9K45d1lk0mnVdLhLY3cJ79og-K-Hxl5L5Uh2XnYA6z-N_0mKhI7Z/exec";
+    <!-- 排行榜模式 -->
+    <div id="ranking-view-container" style="display: none;">
+        <button class="btn-home-ranking" onclick="clearSearch(false)">↶ 退出排行榜 / 返回主頁</button>
+        <div id="ranking-empty-msg" style="text-align: center; color: #ff3366; display: none; margin: 20px 0; font-weight: bold; letter-spacing: 1px;">
+            尚未有任何上榜的咒語，快去點擊愛心與收藏吧！
+        </div>
+        <h2 id="heading-ranking-story" style="display: none;"><span class="ranking-title">⟡ 劇情區熱門 (Top 10)</span></h2>
+        <div id="ranking-story-list" class="card-list"></div>
+        <h2 id="heading-ranking-template" style="display: none;"><span class="ranking-title">⟡ 模板區熱門 (Top 10)</span></h2>
+        <div id="ranking-template-list" class="card-list"></div>
+    </div>
 
-    // 網頁一打開，立刻發送 fetch 請求拿資料
-    window.onload = async () => {
-      try {
-        const response = await fetch(API_URL);
-        const data = await response.json();
-        renderData(data);
-      } catch (error) {
-        Swal.fire('錯誤', '連線失敗，請稍後再試！', 'error');
-      }
-    };
+    <!-- 底部登入區 -->
+    <div class="login-box">
+        <div style="font-weight:bold; letter-spacing:2px; color:#ffb703;">❖ 系統管理員登入</div>
+        <input type="password" id="pass-field" placeholder="請輸入安全金鑰">
+        <button onclick="gatekeeper()">驗證身分</button>
+        <div id="status-msg" class="status-text">... 等待驗證 ...</div>
+    </div>
 
-    // 把資料印到畫面上
-    function renderData(data) {
-      const grid = document.getElementById('promptGrid');
-      document.getElementById('loading').style.display = 'none';
-      grid.innerHTML = '';
-      
-      data.forEach(item => {
-        const card = document.createElement('div');
-        card.className = 'card';
-        card.innerHTML = `
-          <div class="card-category">${item.category || '未分類'}</div>
-          <div class="card-title">${item.title || '無標題'}</div>
-          <div class="card-content">${item.content || ''}</div>
-          <button class="btn-copy" onclick="copyText(this, \`${(item.content || '').replace(/`/g, '\\`')}\`)">複製咒語</button>
-        `;
-        grid.appendChild(card);
-      });
-    }
+    <button id="back-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">⇡</button>
+    <button id="clear-search-btn-float" onclick="clearSearch(false)">↶ 返回主頁</button>
 
-    // 複製按鈕功能
-    function copyText(btn, text) {
-      navigator.clipboard.writeText(text).then(() => {
-        const originalText = btn.innerText;
-        btn.innerText = '✅ 已複製！';
-        btn.style.background = '#e8f5e9';
-        btn.style.color = '#2e7d32';
-        setTimeout(() => {
-          btn.innerText = originalText;
-          btn.style.background = '#e3f2fd';
-          btn.style.color = '#1976d2';
-        }, 2000);
-      });
-    }
+    <!-- 展示廳彈窗 -->
+    <div id="draw-modal" class="modal-overlay">
+        <div class="modal-container">
+            <div class="modal-header"><h3 id="modal-panel-title">⟡ 圖卡定製展示廳</h3><button class="close-modal-btn" onclick="closeDrawModal()">✕</button></div>
+            <div class="modal-body">
+                <div class="modal-ctrl-row">
+                    <select id="style-select" class="modal-select" onchange="changeModalStyle()">
+                        <option value="glass">✧ 柔和磨砂玻璃</option>
+                        <option value="elegant_gold">✧ 黑金奢華 VIP</option>
+                        <option value="dark_glow">✧ 暗夜炫彩微光</option>
+                        <option value="minimal">✧ 文藝襯線白卡</option>
+                        <option value="polaroid">✧ 復古經典相框</option>
+                        <option value="notebook">✧ 手帳網格筆記</option>
+                        <option value="holographic">✧ Y2K 幻彩雷射</option>
+                        <option value="retro_pixel">✧ 8-bit 像素終端</option>
+                        <option value="mac_os">✧ Mac 電腦視窗</option>
+                        <option value="cyberpunk">✧ 賽博龐克</option>
+                        <option value="watercolor">✧ 水彩畫布</option>
+                        <option value="game_ui">✧ 遊戲任務面板</option>
+                        <option value="modern_clean">✧ 現代極簡白卡</option>
+                        <option value="film_strip">✧ 日系底片相紙</option>
+                        <option value="newspaper">✧ 質感報紙專欄</option>
+                        <option value="geek_terminal">✧ 極客終端面板</option>
+                    </select>
+                    <button class="modal-shuffle-btn" onclick="shuffleModalBg()">⟳ 換底色</button>
+                </div>
+                <div class="preview-scale-container" id="scale-container"><div id="preview-card-bg" class="preview-card-wrapper"><div id="preview-card-content"></div></div></div>
+            </div>
+            <div class="modal-footer"><button class="action-btn btn-export" id="modal-download-btn" onclick="confirmDownloadCard()">⤓ 儲存圖卡</button><button class="action-btn btn-copy" onclick="copyModalPrompt(this)">⧉ 複製咒語</button></div>
+        </div>
+    </div>
 
-    // 點擊新增按鈕時跳出漂亮視窗
-    async function showAddModal() {
-      const { value: formValues } = await Swal.fire({
-        title: '新增咒語',
-        html:
-          '<input id="swal-pass" class="swal2-input" type="password" placeholder="管理員密碼">' +
-          '<input id="swal-title" class="swal2-input" placeholder="咒語標題">' +
-          '<input id="swal-cat" class="swal2-input" placeholder="分類 (例如: 寫作、畫圖)">' +
-          '<textarea id="swal-content" class="swal2-textarea" placeholder="貼上妳的咒語內容..."></textarea>',
-        focusConfirm: false,
-        showCancelButton: true,
-        confirmButtonText: '儲存',
-        cancelButtonText: '取消',
-        preConfirm: () => {
-          return {
-            pass: document.getElementById('swal-pass').value,
-            title: document.getElementById('swal-title').value,
-            cat: document.getElementById('swal-cat').value,
-            content: document.getElementById('swal-content').value
-          }
+    <script>
+        // 設定專屬 API 網址
+        const API_URL = "https://script.google.com/macros/s/AKfycby8ilWo8uTVumIH9K45d1lk0mnVdLhLY3cJ79og-K-Hxl5L5Uh2XnYA6z-N_0mKhI7Z/exec";
+
+        let prompts=[],clientPassword="",editTargetId=null,showFavsOnly=!1,favorites=JSON.parse(localStorage.getItem('prompt-favs'))||[],likes=JSON.parse(localStorage.getItem('prompt-likes'))||[],currentDrawnIndex=null,currentDrawnBg=null,currentDrawnStyle="glass",searchStateActive=!1,ignoreNextPop=!1,currentViewMode='normal',sessionTimer=null;
+        const SESSION_TIMEOUT_MS=18e5;
+        const themes=['dark','light','terminal','neon','vintage','forest','ocean','crimson','sakura','amber','nebula','glacier','slate','mint','night_blood','silver','peach','dusk_tea','misty_purple','oat_milk'];
+        const themeNames={'dark':'曜石純黑','light':'霜雪明白','terminal':'矩陣極綠','neon':'幻光霓虹','vintage':'復古羊皮','forest':'迷霧深林','ocean':'琉璃深海','crimson':'火舞赤霞','sakura':'櫻吹飛雪','amber':'醇香琥珀','nebula':'幽邃星雲','glacier':'冰川極光','slate':'遠山黛藍','mint':'沁心薄荷','night_blood':'夜幕魅紅','silver':'流銀星輝','peach':'晨曦蜜桃','dusk_tea':'暮光茶韻','misty_purple':'薄暮微光','oat_milk':'燕麥奶茶'};
+        let currentThemeIndex=0;
+
+        window.onload=()=>{
+            window.history.replaceState({app:'init'},'');
+            const e=localStorage.getItem('prompt-theme')||'dark';
+            currentThemeIndex=themes.indexOf(e)!==-1?themes.indexOf(e):0;
+            applyTheme(themes[currentThemeIndex]);
+            changeFontSize(localStorage.getItem('prompt-font-size')||'medium');
+            refreshData();
+        };
+
+        window.addEventListener('scroll',()=>{document.getElementById('back-to-top').style.display=window.scrollY>300?'flex':'none'});
+        function cycleTheme(){currentThemeIndex=(currentThemeIndex+1)%themes.length;applyTheme(themes[currentThemeIndex])}
+        function applyTheme(e){document.documentElement.setAttribute('data-theme',e);localStorage.setItem('prompt-theme',e);document.getElementById('theme-btn').innerText=themeNames[e]}
+        function changeFontSize(e){document.documentElement.style.setProperty('--font-modifier',e==='small'?'-2px':e==='large'?'4px':'0px');localStorage.setItem('prompt-font-size',e)}
+        function toggleCategory(e,t){const n=document.getElementById(`${e}-list`),o=document.getElementById(`${e}-folder`);if(n.style.display==='none'){n.style.display='flex';o.innerText='▾'}else{n.style.display='none';o.innerText='▸'}}
+        function jumpToCategory(e){const t=document.getElementById(`heading-${e}`),n=document.getElementById(`${e}-list`);if(n.style.display==='none')toggleCategory(e,t);t.scrollIntoView({behavior:'smooth',block:'start'})}
+        window.addEventListener('popstate',(e)=>{if(ignoreNextPop){ignoreNextPop=!1;return}if(document.getElementById('draw-modal').style.display==='flex'){closeDrawModal(!0);return}if(editTargetId!==null){cancelEdit(!0);return}if(searchStateActive){clearSearch(!0);return}});
+
+        // 通用 API 發送器
+        async function callApi(action, extraData = {}) {
+            try {
+                const payload = Object.assign({ action: action }, extraData);
+                const res = await fetch(API_URL, {
+                    method: 'POST',
+                    body: JSON.stringify(payload)
+                });
+                return await res.json();
+            } catch (e) {
+                return { success: false, msg: e.message };
+            }
         }
-      });
 
-      if (formValues) {
-        if (!formValues.pass || !formValues.title || !formValues.content) {
-          return Swal.fire('提示', '密碼、標題跟內容不能空白喔！', 'warning');
+        async function refreshData(){
+            const e=localStorage.getItem('prompt-main-cache');
+            if(e){
+                try{prompts=JSON.parse(e);render();showStatus("⟳ 已載入快取，正在同步雲端...","#219ebc")}catch(t){localStorage.removeItem('prompt-main-cache')}
+            }else showStatus("⟳ 正在同步雲端資料...","#ffb703");
+            
+            try {
+                const res = await fetch(API_URL);
+                const data = await res.json();
+                prompts = data;
+                localStorage.setItem('prompt-main-cache', JSON.stringify(data));
+                render();
+                showStatus("", "");
+            } catch(err) {
+                showStatus("✕ 讀取連線失敗", "#ff4d4d");
+            }
+        }
+
+        function showStatus(e,t){const n=document.getElementById('status-msg');n.innerText=e;n.style.color=t}
+        function resetSession(){if(!clientPassword)return;clearTimeout(sessionTimer);sessionTimer=setTimeout(logout,SESSION_TIMEOUT_MS)}
+        function logout(){clientPassword="";document.body.classList.remove('admin-mode');clearTimeout(sessionTimer);showStatus("✓ 已安全登出。","#ffb703");cancelEdit()}
+
+        async function gatekeeper(){
+            const e=document.getElementById('pass-field').value;
+            if(!e)return;
+            showStatus("⟳ 正在驗證...","#ffb703");
+            const res = await callApi("verifyAdmin", { password: e });
+            if(res.success){
+                clientPassword=e;
+                document.body.classList.add('admin-mode');
+                updateAdminStats();
+                showStatus("✓ 驗證成功！","#2a9d8f");
+                resetSession();
+            } else {
+                showStatus("✕ 金鑰錯誤！","#ff4d4d");
+            }
+            document.getElementById('pass-field').value='';
+        }
+
+        function updateAdminStats(){document.getElementById('admin-stat-title').innerText=`❖ 管理員 (現存：${prompts.length} 筆)`}
+        function toggleCard(e){const t=e.nextElementSibling,n=e.querySelector('.arrow');if(t.style.display==="block"){t.style.display="none";if(n)n.style.transform="rotate(0deg)"}else{closeAllCards();t.style.display="block";if(n)n.style.transform="rotate(90deg)"}}
+        function closeAllCards(){document.querySelectorAll('.card-body').forEach(e=>e.style.display='none');document.querySelectorAll('.arrow').forEach(e=>e.style.transform='rotate(0deg)')}
+        function escapeHtml(e){return String(e||'').replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;")}
+        
+        async function toggleInteraction(e,t,n){
+            e.stopPropagation();
+            const o=n==='like',a=o?likes:favorites,r=o?'prompt-likes':'prompt-favs',i=a.indexOf(String(t)),s=i>-1?-1:1;
+            if(s===1)a.push(String(t));else a.splice(i,1);
+            localStorage.setItem(r,JSON.stringify(a));
+            let c=prompts.find(e=>e.id==String(t));
+            if(c){if(o)c.likes=(parseInt(c.likes)||0)+s;else c.favs=(parseInt(c.favs)||0)+s}
+            const l=e.currentTarget;
+            if(o){l.innerHTML=`${s===1?'♥':'♡'} ${c.likes||0}`}else{l.innerHTML=`${s===1?'★':'☆'} ${c.favs||0}`}
+            l.closest('.card').setAttribute(o?'data-like':'data-fav',s===1?'true':'false');
+            callApi("updateStats", { id: t, likeDelta: o?s:0, favDelta: o?0:s });
+            if(showFavsOnly&&!o&&s===-1)searchPrompts();
         }
         
-        Swal.fire({ title: '儲存中...', allowOutsideClick: false });
-        Swal.showLoading();
-
-        // 透過 fetch 把新資料傳給 GAS API
-        try {
-          const res = await fetch(API_URL, {
-            method: 'POST',
-            body: JSON.stringify({
-              action: "addPrompt",
-              password: formValues.pass,
-              title: formValues.title,
-              category: formValues.cat,
-              content: formValues.content
-            })
-          });
-          const result = await res.json();
-          
-          if (result.success) {
-            Swal.fire('成功！', '咒語已經收納進試算表囉！', 'success');
-            renderData(result.data); // 重新渲染最新畫面
-          } else {
-            Swal.fire('失敗', result.msg, 'error');
-          }
-        } catch (e) {
-          Swal.fire('錯誤', '網路異常，請稍後再試', 'error');
+        function generateDynamicKeywords(){const e=document.getElementById('keyword-container');e.innerHTML='<span class="kw-label">❖ 推薦：</span>';if(prompts.length===0)return;let t=[];prompts.forEach(e=>{if(e.title){e.title.split(/[\s,，、\[\]\(\)（）\-\/\|｜【】]+/).forEach(e=>{const n=e.trim();if(n.length>=2&&n.length<=6)t.push(n)})}});let n=[...new Set(t)];if(n.length===0)n=['大綱','角色','設定'];n.sort(()=>.5-Math.random());n.slice(0,5).forEach(t=>{const n=document.createElement('span');n.className='kw-chip';n.innerText=t;n.onclick=()=>{document.getElementById('search-box').value=t;searchPrompts()};e.appendChild(n)})}
+        
+        function buildCardElement(e,t,n,o){const a=favorites.includes(String(e.id)),r=likes.includes(String(e.id)),i=document.createElement('div');i.className=`card ${e.category==='template'?'template-card':'story-card'}`;if(n)i.classList.add('ranking-card');i.setAttribute('data-id',e.id);i.setAttribute('data-title',(e.title||'').toLowerCase());i.setAttribute('data-content',(e.content||'').toLowerCase());i.setAttribute('data-fav',a?'true':'false');i.setAttribute('data-like',r?'true':'false');const s=prompts.findIndex(t=>t.id===e.id);i.innerHTML=`${n?`<div class="rank-badge">NO.${t+1} ✦ 綜合評分: ${o}</div>`:''}<div class="card-header" onclick="toggleCard(this)"><div class="card-title"><span class="arrow">▶</span><span class="text">${escapeHtml(e.title||'未命名')}</span><div class="stats-icons"><span class="like-btn" onclick="toggleInteraction(event, '${e.id}', 'like')">${r?'♥':'♡'} ${e.likes||0}</span><span class="fav-star" onclick="toggleInteraction(event, '${e.id}', 'fav')">${a?'★':'☆'} ${e.favs||0}</span></div></div><div class="right-btns"><button class="edit-btn" onclick="event.stopPropagation(); startEdit(${JSON.stringify(e).replace(/"/g,'&quot;')})">✎</button><button class="del-btn" onclick="event.stopPropagation(); deletePrompt(this, '${e.id}')">✕</button></div></div><div class="card-body"><div class="card-content">${escapeHtml(e.content)}</div><div class="card-actions">${e.link?`<a href="${e.link}" target="_blank" class="action-btn btn-link">↗ 開啟連結</a>`:''}<button class="action-btn btn-export" onclick="openDrawModal(false, ${s})">⟡ 產生圖卡</button><button class="action-btn btn-copy" onclick="copyPromptText(this, ${s})">⧉ 複製</button></div></div>`;return i}
+        
+        function render(){const e=document.getElementById('story-list'),t=document.getElementById('template-list'),n=document.getElementById('ranking-story-list'),o=document.getElementById('ranking-template-list');e.innerHTML='';t.innerHTML='';n.innerHTML='';o.innerHTML='';let a=0,r=0;if(currentViewMode==='ranking'){document.getElementById('normal-view-container').style.display='none';document.getElementById('ranking-view-container').style.display='block';let e=prompts.map(e=>({...e,score:(parseInt(e.likes)||0)+(parseInt(e.favs)||0)*2})).filter(e=>e.score>0),t=e.filter(e=>e.category!=='template').sort((e,t)=>t.score-e.score).slice(0,10),a=e.filter(e=>e.category==='template').sort((e,t)=>t.score-e.score).slice(0,10);document.getElementById('heading-ranking-story').style.display=t.length>0?'flex':'none';document.getElementById('heading-ranking-template').style.display=a.length>0?'flex':'none';document.getElementById('ranking-empty-msg').style.display=t.length===0&&a.length===0?'block':'none';t.forEach((e,t)=>n.appendChild(buildCardElement(e,t,!0,e.score)));a.forEach((e,t)=>o.appendChild(buildCardElement(e,t,!0,e.score)))}else{document.getElementById('normal-view-container').style.display='block';document.getElementById('ranking-view-container').style.display='none';prompts.forEach((n,o)=>{if(n.category==='template')r++;else a++;let i=buildCardElement(n,o,!1,0);if(n.category==='template')t.appendChild(i);else e.appendChild(i)})}document.getElementById('global-count').innerText=`✦ 本站目前共收錄 ${prompts.length} 組 AI 咒語 ✦`;document.getElementById('story-count').innerText=`(${a})`;document.getElementById('template-count').innerText=`(${r})`;updateAdminStats();generateDynamicKeywords();searchPrompts()}
+        function toggleFavView(){if(currentViewMode==='ranking'){currentViewMode='normal';document.getElementById('ranking-toggle-btn').classList.remove('active');render()}showFavsOnly=!showFavsOnly;const e=document.getElementById('fav-toggle-btn');if(showFavsOnly){e.classList.add('active');e.innerText='★ 顯示全部'}else{e.classList.remove('active');e.innerText='★ 收藏'}searchPrompts()}
+        function toggleRankingView(){const e=document.getElementById('ranking-toggle-btn');if(currentViewMode!=='ranking'){currentViewMode='ranking';e.classList.add('active');showFavsOnly=!1;document.getElementById('fav-toggle-btn').classList.remove('active');document.getElementById('fav-toggle-btn').innerText='★ 收藏';document.getElementById('search-box').value='';if(!searchStateActive){searchStateActive=!0;history.pushState({search:!0},'')}render()}else clearSearch()}
+        function clearSearch(e=!1){document.getElementById('search-box').value='';showFavsOnly=!1;document.getElementById('fav-toggle-btn').classList.remove('active');document.getElementById('fav-toggle-btn').innerText='★ 收藏';document.getElementById('ranking-toggle-btn').classList.remove('active');const t=currentViewMode==='ranking';currentViewMode='normal';searchStateActive=!1;if(!e){ignoreNextPop=!0;history.back()}if(t)render();else searchPrompts()}
+        function searchPrompts(){const e=document.getElementById('search-box').value.trim(),t=e.toLowerCase(),n=e?new RegExp(`(${e.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`,'gi'):null,o=e!==''||showFavsOnly||currentViewMode==='ranking';if(o&&!searchStateActive){searchStateActive=!0;history.pushState({search:!0},'')}else if(!o&&searchStateActive){searchStateActive=!1;ignoreNextPop=!0;history.back()}document.getElementById('clear-search-btn-float').style.display=o?'flex':'none';document.querySelectorAll('.card').forEach(o=>{const a=o.getAttribute('data-title')||'',r=o.getAttribute('data-content')||'',i=o.getAttribute('data-fav')==='true';if((a.includes(t)||r.includes(t))&&(showFavsOnly?i:!0)){o.style.display='block';const t=prompts.find(e=>String(e.id)===o.getAttribute('data-id'));if(t){if(e){o.querySelector('.text').innerHTML=escapeHtml(t.title||'未命名').replace(n,'<mark>$1</mark>');o.querySelector('.card-content').innerHTML=escapeHtml(t.content).replace(n,'<mark>$1</mark>')}else{o.querySelector('.text').innerHTML=escapeHtml(t.title||'未命名');o.querySelector('.card-content').innerHTML=escapeHtml(t.content)}}}else o.style.display='none'})}
+        function startEdit(e){resetSession();if(editTargetId===null)history.pushState({edit:!0},'');editTargetId=e.id;document.getElementById('category').value=e.category;document.getElementById('title').value=e.title;document.getElementById('link').value=e.link;document.getElementById('content').value=e.content;document.getElementById('submit-btn').innerText="💾 儲存修改";document.getElementById('submit-btn').style.backgroundColor="#219ebc";document.getElementById('cancel-btn').style.display="block";document.querySelector('.input-area').scrollIntoView({behavior:'smooth'})}
+        function cancelEdit(e=!1){const t=editTargetId!==null;editTargetId=null;document.getElementById('title').value='';document.getElementById('link').value='';document.getElementById('content').value='';document.getElementById('submit-btn').innerText="＋ 新增咒語";document.getElementById('submit-btn').style.backgroundColor="#fb8500";document.getElementById('cancel-btn').style.display="none";if(t&&!e){ignoreNextPop=!0;history.back()}}
+        
+        async function handleSubmit(){
+            resetSession();
+            const e=document.getElementById('category').value,t=document.getElementById('title').value.trim(),n=document.getElementById('link').value.trim(),o=document.getElementById('content').value.trim();
+            if(!o)return;
+            if(editTargetId===null&&prompts.some(e=>e.title.trim()===t||e.content.trim()===o)){if(!confirm("系統偵測到重複，確定收錄嗎？"))return}
+            showStatus("⟳ 正在同步雲端...","#ffb703");
+            
+            let res;
+            if(editTargetId===null) {
+                res = await callApi("addPrompt", { password: clientPassword, category: e, title: t, link: n, content: o });
+            } else {
+                res = await callApi("updatePrompt", { password: clientPassword, id: editTargetId, category: e, title: t, link: n, content: o });
+            }
+            if(res.success){
+                prompts=res.data;
+                localStorage.setItem('prompt-main-cache',JSON.stringify(res.data));
+                render();
+                cancelEdit();
+                showStatus("✓ 保存成功！","#2a9d8f");
+            }else showStatus(res.msg,"#ff4d4d");
         }
-      }
-    }
-  </script>
+
+        async function deletePrompt(e,t){
+            resetSession();
+            if(e.innerText==="✕"){
+                e.innerText="確定?";
+                e.style.color="#fb8500";
+                setTimeout(()=>{if(e.innerText==="確定?"){e.innerText="✕";e.style.color="#ff4d4d"}},3000)
+            }else{
+                showStatus("⟳ 刪除中...","#ffb703");
+                const res = await callApi("deletePrompt", { password: clientPassword, id: t });
+                if(res.success){
+                    if(editTargetId===t)cancelEdit();
+                    prompts=res.data;
+                    localStorage.setItem('prompt-main-cache',JSON.stringify(res.data));
+                    render();
+                    showStatus("✓ 刪除成功！","#2a9d8f");
+                }else showStatus(res.msg,"#ff4d4d");
+            }
+        }
+
+        function copyPromptText(e,t){navigator.clipboard.writeText(prompts[t].content).then(()=>{const t=e.innerText;e.innerText='✓ 已複製！';e.style.backgroundColor='#2a9d8f';setTimeout(()=>{e.innerText=t;e.style.backgroundColor='#023e8a'},1500)})}
+        function copyModalPrompt(e){if(currentDrawnIndex===null)return;navigator.clipboard.writeText(prompts[currentDrawnIndex].content).then(()=>{const t=e.innerText;e.innerText='✓ 已複製！';e.style.backgroundColor='#2a9d8f';setTimeout(()=>{e.innerText=t;e.style.backgroundColor='#023e8a'},1500)})}
+        
+        const gradients=['linear-gradient(135deg,#fdfcfb 0,#e2d1c3 100%)','linear-gradient(135deg,#a18cd1 0,#fbc2eb 100%)','linear-gradient(135deg,#84fab0 0,#8fd3f4 100%)','linear-gradient(135deg,#ff9a9e 0,#fad0c4 100%)','linear-gradient(135deg,#ffecd2 0,#fcb69f 100%)','linear-gradient(135deg,#a8edea 0,#fed6e3 100%)','linear-gradient(135deg,#d4fc79 0,#96e6a1 100%)','linear-gradient(135deg,#e0c3fc 0,#8ec5fc 100%)','linear-gradient(135deg,#f5f7fa 0,#c3cfe2 100%)','linear-gradient(135deg,#a1c4fd 0,#c2e9fb 100%)','linear-gradient(135deg,#d299c2 0,#fef9d7 100%)','linear-gradient(135deg,#ebc0fd 0,#d9ded8 100%)','linear-gradient(135deg,#f6d365 0,#fda085 100%)','linear-gradient(135deg,#96fbc4 0,#f9f586 100%)','linear-gradient(135deg,#c1dfc4 0,#deecdd 100%)','linear-gradient(135deg,#ffc3a0 0,#ffafbd 100%)','linear-gradient(135deg,#accbee 0,#e7f0fd 100%)','linear-gradient(135deg,#f3e7e9 0,#e3eeff 100%)','linear-gradient(135deg,#cd9cf2 0,#f6f3ff 100%)','linear-gradient(135deg,#edc0bf 0,#94bee5 100%)','linear-gradient(135deg,#cfd9df 0,#e2ebf0 100%)','linear-gradient(135deg,#c79081 0,#dfa579 100%)','linear-gradient(135deg,#868f96 0,#596164 100%)','linear-gradient(135deg,#8baaaa 0,#ae8b9c 100%)','linear-gradient(135deg,#9babb8 0,#eee3cb 100%)','linear-gradient(135deg,#e6e9f0 0,#eef1f5 100%)','linear-gradient(to top,#cfd9df 0,#e2ebf0 100%)','linear-gradient(135deg,#fdfbfb 0,#ebedee 100%)','linear-gradient(135deg,#434343 0,#000000 100%)','linear-gradient(135deg,#111111 0,#434343 100%)','linear-gradient(135deg,#2c3e50 0,#3498db 100%)','linear-gradient(135deg,#134e5e 0,#71b280 100%)','linear-gradient(135deg,#6a11cb 0,#2575fc 100%)','linear-gradient(135deg,#0ba360 0,#3cba92 100%)','linear-gradient(135deg,#30cfd0 0,#330867 100%)','linear-gradient(135deg,#1f1c2c 0,#928dab 100%)','linear-gradient(135deg,#09203f 0,#537895 100%)','linear-gradient(to right,#4facfe 0,#00f2fe 100%)','linear-gradient(to right,#43e97b 0,#38f9d7 100%)','linear-gradient(135deg,#00c6fb 0,#005bea 100%)','linear-gradient(135deg,#4158d0 0,#c850c0 46%,#ffcc70 100%)','linear-gradient(135deg,#ff0844 0,#ffb199 100%)','linear-gradient(135deg,#f83600 0,#f9d423 100%)','linear-gradient(135deg,#fa709a 0,#fee140 100%)','linear-gradient(135deg,#f43b47 0,#453a94 100%)','linear-gradient(135deg,#b224ef 0,#7579ff 100%)','linear-gradient(135deg,#fc00ff 0,#00dbde 100%)','radial-gradient(circle at 10% 20%,rgb(255, 200, 124) 0,rgb(252, 251, 121) 90%)','linear-gradient(45deg,#ff9a9e 0,#fecfef 99%,#fecfef 100%)','linear-gradient(120deg,#d4fc79 0,#96e6a1 100%)','linear-gradient(135deg,#0f2027 0,#203a43 50%,#2c5364 100%)','linear-gradient(135deg,#141e30 0,#243b55 100%)','linear-gradient(135deg,#000000 0,#0f9b0f 100%)','linear-gradient(135deg,#4b1248 0,#f0c27b 100%)','linear-gradient(135deg,#000000 0,#e74c3c 100%)','linear-gradient(135deg,#232526 0,#414345 100%)','linear-gradient(135deg,#1D2B64 0,#F8CDDA 100%)','linear-gradient(135deg,#1A2980 0,#26D0CE 100%)','linear-gradient(135deg,#FF416C 0,#FF4B2B 100%)','linear-gradient(135deg,#0B486B 0,#F56217 100%)','linear-gradient(135deg,#f5af19 0,#f12711 100%)','linear-gradient(135deg,#23074d 0,#cc5333 100%)','linear-gradient(135deg,#3a6073 0,#16222a 100%)','linear-gradient(135deg,#f2709c 0,#ff9472 100%)','linear-gradient(135deg,#c471ed 0,#f64f59 100%)','linear-gradient(135deg,#12c2e9 0,#c471ed 50%,#f64f59 100%)','linear-gradient(135deg,#b92b27 0,#1565c0 100%)','linear-gradient(135deg,#e1b382 0,#c89666 100%)','linear-gradient(135deg,#283e51 0,#4b7bec 100%)','linear-gradient(135deg,#0575e6 0,#021b79 100%)','linear-gradient(135deg,#00f260 0,#0575e6 100%)','linear-gradient(135deg,#13e7e8 0,#f78fb3 100%)','linear-gradient(135deg,#e8cbc0 0,#636fa4 100%)','linear-gradient(135deg,#f7b733 0,#fc4a1a 100%)','linear-gradient(135deg,#2c3e50 0,#333333 100%)','linear-gradient(135deg,#34e89e 0,#0f3443 100%)','linear-gradient(135deg,#ff758c 0,#ff7eb3 100%)','linear-gradient(135deg,#7f7fd5 0,#86a8e7 50%,#91eae4 100%)','linear-gradient(135deg,#9796f0 0,#fbc7d4 100%)','linear-gradient(135deg,#b1bf8e 0,#b2fefa 100%)'];
+        function getCardHTML(e,t){const n=e.category==='template',o=escapeHtml(e.title),a=escapeHtml(e.content);
+        if(t==="glass")return`<div style="background:rgba(255,255,255,.68);backdrop-filter:blur(25px);border:1px solid rgba(255,255,255,.6);border-radius:20px;padding:30px;box-shadow:0 10px 30px rgba(0,0,0,.06);text-align:left"><div style="font-size:13px;color:#555;font-weight:bold;margin-bottom:10px;letter-spacing:2px">${n?'✦ AI TEMPLATE':'✦ AI PROMPT'}</div><h2 style="margin:0 0 15px 0;font-size:26px;line-height:1.3;color:#111;border-bottom:2px solid rgba(0,0,0,.08);padding-bottom:12px;font-weight:700">${o}</h2><div class="preview-content-scroll" style="font-size:17px;line-height:1.7;color:#333;white-space:pre-wrap">${a}</div><div style="margin-top:25px;border-top:1px dashed rgba(0,0,0,.15);padding-top:15px;display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#666"><span>My AI Workspace</span><span style="background:rgba(255,255,255,.6);padding:4px 10px;border-radius:10px;font-weight:bold">✦ 咒語收納區 ✦</span></div></div>`;
+        if(t==="dark_glow")return`<div style="background:rgba(15,16,26,.85);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:30px;box-shadow:0 15px 35px rgba(0,0,0,.6);text-align:left"><div style="font-size:13px;color:#0ff;font-weight:bold;margin-bottom:10px;letter-spacing:2px;text-shadow:0 0 8px rgba(0,255,255,.4)">${n?'✦ SYSTEM TPL':'✦ TECH PROMPT'}</div><h2 style="margin:0 0 15px 0;font-size:26px;line-height:1.3;color:#fff;border-bottom:2px solid rgba(255,255,255,.1);padding-bottom:12px;font-weight:600">${o}</h2><div class="preview-content-scroll" style="font-size:17px;line-height:1.7;color:#e0e2e5;white-space:pre-wrap">${a}</div><div style="margin-top:25px;border-top:1px dashed rgba(255,255,255,.1);padding-top:15px;display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#888"><span>Engine V12</span><span style="border:1px solid rgba(255,255,255,.2);padding:4px 10px;border-radius:10px;color:#ffd700">✦ CORE ✦</span></div></div>`;
+        if(t==="minimal")return`<div style="background:#fff;border-radius:12px;padding:35px;box-shadow:0 12px 40px rgba(0,0,0,.15);text-align:left;font-family:'Times New Roman',Georgia,serif"><div style="font-size:12px;color:#888;margin-bottom:8px;font-style:italic">— ${n?'Structure Definition':'Creative Prompt Log'} —</div><h2 style="margin:0 0 20px 0;font-size:28px;line-height:1.2;color:#111;border-bottom:1px solid #111;padding-bottom:10px;font-weight:normal">${o}</h2><div class="preview-content-scroll" style="font-size:17px;line-height:1.8;color:#222;white-space:pre-wrap;font-family:sans-serif">${a}</div><div style="margin-top:25px;padding-top:12px;display:flex;justify-content:center;font-size:11px;color:#999;letter-spacing:3px;text-transform:uppercase">• MY AI WORKSPACE •</div></div>`;
+        if(t==="polaroid")return`<div style="background:#fcfcf9;border-radius:4px;padding:25px 25px 50px 25px;box-shadow:0 10px 25px rgba(0,0,0,.2);text-align:left;border:1px solid #e3e3df"><div style="background:#efefeb;border-radius:8px;padding:20px;box-shadow:inset 0 2px 8px rgba(0,0,0,.05);margin-bottom:20px"><div class="preview-content-scroll" style="font-size:16px;line-height:1.6;color:#444;white-space:pre-wrap;font-family:inherit">${a}</div></div><div style="font-family:'Georgia',serif;font-size:24px;font-weight:bold;color:#2c3e50;padding-left:5px;letter-spacing:.5px">✎ ${o}</div><div style="font-size:11px;color:#b0b0ac;text-align:right;margin-top:10px;padding-right:5px"># ${n?'TEMPLATE':'PROMPT'}</div></div>`;
+        if(t==="elegant_gold")return`<div style="background:linear-gradient(135deg,#1c1c1c 0,#0a0a0a 100%);border:2px solid #d4af37;border-radius:8px;padding:35px;box-shadow:inset 0 0 20px rgba(212,175,55,.1),0 15px 40px rgba(0,0,0,.8);text-align:center"><div style="font-size:14px;color:#d4af37;margin-bottom:15px;letter-spacing:4px;text-transform:uppercase">♕ Premium ${n?'Template':'Prompt'} ♕</div><h2 style="margin:0 0 20px 0;font-size:28px;line-height:1.3;color:#fff;font-family:'Georgia',serif;font-weight:normal;border-bottom:1px solid rgba(212,175,55,.3);padding-bottom:15px">${o}</h2><div class="preview-content-scroll" style="font-size:17px;line-height:1.8;color:#ccc;white-space:pre-wrap;text-align:left">${a}</div></div>`;
+        if(t==="notebook")return`<div style="background:#fffdf5;border-radius:12px;padding:30px;box-shadow:2px 5px 15px rgba(0,0,0,.1);text-align:left;background-image:repeating-linear-gradient(transparent,transparent 29px,#e1d8cd 30px);border-left:3px double #dcae96"><div style="font-family:'Courier New',monospace;font-size:14px;color:#a59382;margin-bottom:15px;font-weight:bold;padding-bottom:10px;border-bottom:2px solid #dcae96">Date: ${new Date().toLocaleDateString()} | Type: ${n?'TPL':'PRT'}</div><h2 style="margin:0 0 15px 0;font-size:26px;color:#3e362e;font-family:'Georgia',serif">${o}</h2><div class="preview-content-scroll" style="font-size:18px;line-height:30px;color:#4a4138;white-space:pre-wrap">${a}</div></div>`;
+        if(t==="holographic")return`<div style="background:linear-gradient(125deg,rgba(255,255,255,.4) 0,rgba(255,255,255,.1) 100%);backdrop-filter:blur(10px);border:2px solid rgba(255,255,255,.8);border-radius:30px;padding:35px;box-shadow:0 10px 40px rgba(255,255,255,.2),inset 0 0 20px rgba(255,255,255,.5);text-align:left"><div style="font-size:15px;color:#fff;font-weight:900;margin-bottom:10px;letter-spacing:2px;text-shadow:1px 1px 2px rgba(0,0,0,.2)">✧ Y2K ${n?'TEMPLATE':'PROMPT'}</div><h2 style="margin:0 0 15px 0;font-size:28px;line-height:1.3;color:#fff;text-shadow:2px 2px 4px rgba(0,0,0,.3);border-bottom:3px solid #fff;padding-bottom:10px;font-weight:900">${o}</h2><div class="preview-content-scroll" style="font-size:18px;line-height:1.6;color:#fff;white-space:pre-wrap;font-weight:bold;text-shadow:1px 1px 3px rgba(0,0,0,.4)">${a}</div></div>`;
+        if(t==="retro_pixel")return`<div style="background:#000;border:4px solid #fff;padding:25px;text-align:left;font-family:'Courier New',Courier,monospace;box-shadow:8px 8px 0 rgba(0,0,0,.5)"><div style="font-size:14px;color:#0f0;margin-bottom:15px;font-weight:bold">> INIT ${n?'TEMPLATE':'PROMPT'}.EXE</div><h2 style="margin:0 0 15px 0;font-size:24px;color:#fff;border-bottom:2px dashed #555;padding-bottom:15px">[ ${o} ]</h2><div class="preview-content-scroll" style="font-size:16px;line-height:1.5;color:#0f0;white-space:pre-wrap">${a}</div><div style="margin-top:20px;color:#fff;font-size:14px;text-align:right">PRESS START...</div></div>`;
+        if(t==="mac_os")return`<div style="background:#fff;border-radius:12px;border:1px solid #ccc;box-shadow:0 20px 40px rgba(0,0,0,.2);overflow:hidden;text-align:left"><div style="background:#e3e3e3;padding:10px 15px;display:flex;align-items:center;border-bottom:1px solid #d1d1d1"><div style="width:12px;height:12px;background:#ff5f56;border-radius:50%;margin-right:8px;border:1px solid #e0443e"></div><div style="width:12px;height:12px;background:#ffbd2e;border-radius:50%;margin-right:8px;border:1px solid #dea123"></div><div style="width:12px;height:12px;background:#27c93f;border-radius:50%;border:1px solid #1aab29"></div><div style="flex:1;text-align:center;font-family:-apple-system,sans-serif;font-size:13px;color:#4d4d4d;font-weight:600">${o}</div></div><div class="preview-content-scroll" style="padding:25px;font-size:16px;line-height:1.6;color:#333;white-space:pre-wrap;font-family:-apple-system,BlinkMacSystemFont,sans-serif">${a}</div></div>`;
+        if(t==="cyberpunk")return`<div style="background:#fcee0a;border:4px solid #000;padding:30px;position:relative;box-shadow:10px 10px 0 #000;text-align:left"><div style="background:#000;color:#fcee0a;padding:5px 15px;display:inline-block;font-weight:900;font-size:14px;letter-spacing:2px;text-transform:uppercase;margin-bottom:15px">WAKE UP, SAMURAI</div><h2 style="margin:0 0 15px 0;font-size:28px;line-height:1.2;color:#000;font-family:'Impact',sans-serif;text-transform:uppercase;border-bottom:4px solid #000;padding-bottom:10px">${o}</h2><div class="preview-content-scroll" style="font-size:17px;line-height:1.6;color:#111;white-space:pre-wrap;font-weight:bold">${a}</div></div>`;
+        if(t==="watercolor")return`<div style="background:#fdfaf6;border-radius:4px;padding:40px;box-shadow:inset 0 0 50px rgba(0,0,0,.03),0 10px 30px rgba(0,0,0,.1);text-align:center;border:1px solid #e8e3d8"><div style="font-family:'Brush Script MT',cursive,serif;font-size:34px;color:#3e5c76;margin-bottom:10px">${o}</div><div style="width:50px;height:3px;background:#e0a96d;margin:0 auto 20px auto;border-radius:2px"></div><div class="preview-content-scroll" style="font-size:17px;line-height:1.9;color:#444;white-space:pre-wrap;font-family:'Georgia',serif;text-align:left">${a}</div></div>`;
+        if(t==="game_ui")return`<div style="background:rgba(0,20,40,.9);border:2px solid #00a8ff;border-radius:8px;padding:25px;box-shadow:0 0 15px rgba(0,168,255,.4),inset 0 0 20px rgba(0,168,255,.2);text-align:left"><div style="font-family:'Courier New',monospace;font-size:13px;color:#00a8ff;margin-bottom:10px;font-weight:bold">[ QUEST ACCEPTED ]</div><h2 style="margin:0 0 15px 0;font-size:24px;color:#fff;text-shadow:0 0 10px rgba(0,168,255,.8);border-bottom:1px dashed #00a8ff;padding-bottom:10px">▶ ${o}</h2><div class="preview-content-scroll" style="font-size:16px;line-height:1.6;color:#dcdde1;white-space:pre-wrap;font-family:sans-serif">${a}</div></div>`;
+        if(t==="modern_clean")return`<div style="background:#ffffff;border-radius:16px;padding:35px;box-shadow:0 10px 30px rgba(0,0,0,.08);text-align:left;border:1px solid #eaeaea"><div style="font-size:12px;color:#888;font-weight:600;margin-bottom:8px;letter-spacing:1px">MODERN COLLECTION</div><h2 style="margin:0 0 15px 0;font-size:24px;color:#111;border-bottom:2px solid #f0f0f0;padding-bottom:10px;font-weight:700">${o}</h2><div class="preview-content-scroll" style="font-size:16px;line-height:1.7;color:#444;white-space:pre-wrap">${a}</div></div>`;
+        if(t==="film_strip")return`<div style="background:#111;border:8px solid #222;border-radius:6px;padding:25px;box-shadow:0 12px 30px rgba(0,0,0,.5);text-align:left;color:#fff"><div style="font-size:11px;color:#aaa;margin-bottom:10px;letter-spacing:3px">FILM NO. 04886</div><h2 style="margin:0 0 15px 0;font-size:24px;color:#ffd700;border-bottom:1px dashed #444;padding-bottom:10px">${o}</h2><div class="preview-content-scroll" style="font-size:16px;line-height:1.6;color:#ddd;white-space:pre-wrap">${a}</div></div>`;
+        if(t==="newspaper")return`<div style="background:#f4f1ea;border-radius:4px;padding:35px;box-shadow:0 8px 25px rgba(0,0,0,.15);text-align:left;border:2px solid #2c2c2c;font-family:'Georgia',serif"><div style="font-size:12px;color:#555;text-align:center;border-bottom:1px solid #2c2c2c;padding-bottom:5px;margin-bottom:15px;font-weight:bold;letter-spacing:2px">THE DAILY PROMPT GAZETTE</div><h2 style="margin:0 0 15px 0;font-size:26px;color:#111;text-align:center;border-bottom:1px solid #2c2c2c;padding-bottom:10px">${o}</h2><div class="preview-content-scroll" style="font-size:16px;line-height:1.8;color:#333;white-space:pre-wrap">${a}</div></div>`;
+        if(t==="geek_terminal")return`<div style="background:#0a0f0d;border:1px solid #10b981;border-radius:10px;padding:25px;box-shadow:0 0 20px rgba(16,185,129,.2);text-align:left;font-family:'Courier New',Courier,monospace"><div style="font-size:13px;color:#10b981;margin-bottom:10px">root@takobox:~# execute ${o}</div><div class="preview-content-scroll" style="font-size:15px;line-height:1.6;color:#34d399;white-space:pre-wrap">${a}</div></div>`;}
+
+        function openDrawModal(e=!0,t=null){if(prompts.length===0){alert("資料庫還是空的唷！");return}currentDrawnIndex=e?Math.floor(Math.random()*prompts.length):t;currentDrawnBg=gradients[Math.floor(Math.random()*gradients.length)];currentDrawnStyle=document.getElementById('style-select').value;document.getElementById('modal-panel-title').innerText=e?"⚄ 抽卡結果預覽":"⟡ 圖卡樣式定製";renderModalPreview();document.getElementById('draw-modal').style.display='flex';history.pushState({modal:!0},'')}
+        function closeDrawModal(e=!1){document.getElementById('draw-modal').style.display='none';if(!e){ignoreNextPop=!0;history.back()}}
+        function shuffleModalBg(){currentDrawnBg=gradients[Math.floor(Math.random()*gradients.length)];renderModalPreview()}
+        function changeModalStyle(){currentDrawnStyle=document.getElementById('style-select').value;renderModalPreview()}
+        function renderModalPreview(){if(currentDrawnIndex===null)return;const e=prompts[currentDrawnIndex];const t=document.getElementById('preview-card-bg');t.style.background=currentDrawnBg;document.getElementById('preview-card-content').innerHTML=getCardHTML(e,currentDrawnStyle);setTimeout(()=>{updateResponsiveScale()},50)}
+        function updateResponsiveScale(){const e=document.getElementById('scale-container'),t=document.getElementById('preview-card-bg');if(!e||!t)return;t.style.transform='scale(1)';e.style.height='auto';const n=e.offsetWidth,o=450;if(n<o){const a=n/o*.95;t.style.transform=`scale(${a})`;e.style.height=(t.offsetHeight*a)+'px'}else{t.style.transform=`scale(1)`;e.style.height=t.offsetHeight+'px'}}
+        function confirmDownloadCard(){if(currentDrawnIndex===null)return;const e=document.getElementById('modal-download-btn'),t=e.innerText;e.innerText='⟳ 繪製中...';e.style.opacity='.7';const n=prompts[currentDrawnIndex],o=document.createElement('div');o.style.position='absolute';o.style.left='-9999px';o.style.top='-9999px';o.style.width='650px';o.style.padding='50px';o.style.background=currentDrawnBg;o.style.borderRadius='30px';o.style.boxSizing='border-box';o.innerHTML=getCardHTML(n,currentDrawnStyle).replace(/preview-content-scroll/g,'');document.body.appendChild(o);html2canvas(o,{scale:2,backgroundColor:null,useCORS:!0}).then(a=>{const r=document.createElement('a');r.download=`${String(n.title).substring(0,10)}_卡片.png`;r.href=a.toDataURL('image/png');r.click();document.body.removeChild(o);e.innerText='✓ 下載成功！';e.style.backgroundColor='#2a9d8f';setTimeout(()=>{e.innerText=t;e.style.backgroundColor='';e.style.opacity='1'},2000)}).catch(n=>{alert("圖卡產生失敗！");e.innerText=t;e.style.opacity='1';document.body.removeChild(o)})}
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 </body>
 </html>
