@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>我的咒語收納區</title>
+  <!-- 引入 SweetAlert2 讓彈出視窗變漂亮 -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #f7f9fc; margin: 0; padding: 15px; color: #333; }
+    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 10px; background: white; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+    h2 { margin: 0; font-size: 1.2rem; color: #2c3e50; }
+    .btn-add { background: #4CAF50; color: white; border: none; padding: 8px 15px; border-radius: 20px; font-weight: bold; cursor: pointer; font-size: 0.9rem; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100%, 1fr)); gap: 15px; }
+    .card { background: white; padding: 15px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.04); position: relative; }
+    .card-title { font-size: 1.1rem; font-weight: bold; margin-bottom: 8px; padding-right: 60px; color: #2c3e50; }
+    .card-category { font-size: 0.75rem; background: #e3f2fd; color: #1976d2; padding: 4px 8px; border-radius: 12px; position: absolute; right: 15px; top: 15px; }
+    .card-content { background: #f8f9fa; padding: 10px; border-radius: 8px; font-size: 0.9rem; color: #555; white-space: pre-wrap; margin-bottom: 10px; max-height: 120px; overflow-y: auto; border: 1px solid #eee; }
+    .btn-copy { width: 100%; background: #e3f2fd; color: #1976d2; border: none; padding: 10px; border-radius: 8px; font-weight: bold; font-size: 0.9rem; cursor: pointer; }
+    .loading-text { text-align: center; color: #888; margin-top: 50px; font-weight: bold; }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <h2>✨ 咒語收納區</h2>
+    <button class="btn-add" onclick="showAddModal()">+ 新增</button>
+  </div>
+
+  <div id="loading" class="loading-text">🚀 正在從後端極速載入資料...</div>
+  <div class="grid" id="promptGrid"></div>
+
+  <script>
+    // 這裡就是妳剛剛生成的專屬 API 網址！
+    const API_URL = "https://script.google.com/macros/s/AKfycby8ilWo8uTVumIH9K45d1lk0mnVdLhLY3cJ79og-K-Hxl5L5Uh2XnYA6z-N_0mKhI7Z/exec";
+
+    // 網頁一打開，立刻發送 fetch 請求拿資料
+    window.onload = async () => {
+      try {
+        const response = await fetch(API_URL);
+        const data = await response.json();
+        renderData(data);
+      } catch (error) {
+        Swal.fire('錯誤', '連線失敗，請稍後再試！', 'error');
+      }
+    };
+
+    // 把資料印到畫面上
+    function renderData(data) {
+      const grid = document.getElementById('promptGrid');
+      document.getElementById('loading').style.display = 'none';
+      grid.innerHTML = '';
+      
+      data.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <div class="card-category">${item.category || '未分類'}</div>
+          <div class="card-title">${item.title || '無標題'}</div>
+          <div class="card-content">${item.content || ''}</div>
+          <button class="btn-copy" onclick="copyText(this, \`${(item.content || '').replace(/`/g, '\\`')}\`)">複製咒語</button>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    // 複製按鈕功能
+    function copyText(btn, text) {
+      navigator.clipboard.writeText(text).then(() => {
+        const originalText = btn.innerText;
+        btn.innerText = '✅ 已複製！';
+        btn.style.background = '#e8f5e9';
+        btn.style.color = '#2e7d32';
+        setTimeout(() => {
+          btn.innerText = originalText;
+          btn.style.background = '#e3f2fd';
+          btn.style.color = '#1976d2';
+        }, 2000);
+      });
+    }
+
+    // 點擊新增按鈕時跳出漂亮視窗
+    async function showAddModal() {
+      const { value: formValues } = await Swal.fire({
+        title: '新增咒語',
+        html:
+          '<input id="swal-pass" class="swal2-input" type="password" placeholder="管理員密碼">' +
+          '<input id="swal-title" class="swal2-input" placeholder="咒語標題">' +
+          '<input id="swal-cat" class="swal2-input" placeholder="分類 (例如: 寫作、畫圖)">' +
+          '<textarea id="swal-content" class="swal2-textarea" placeholder="貼上妳的咒語內容..."></textarea>',
+        focusConfirm: false,
+        showCancelButton: true,
+        confirmButtonText: '儲存',
+        cancelButtonText: '取消',
+        preConfirm: () => {
+          return {
+            pass: document.getElementById('swal-pass').value,
+            title: document.getElementById('swal-title').value,
+            cat: document.getElementById('swal-cat').value,
+            content: document.getElementById('swal-content').value
+          }
+        }
+      });
+
+      if (formValues) {
+        if (!formValues.pass || !formValues.title || !formValues.content) {
+          return Swal.fire('提示', '密碼、標題跟內容不能空白喔！', 'warning');
+        }
+        
+        Swal.fire({ title: '儲存中...', allowOutsideClick: false });
+        Swal.showLoading();
+
+        // 透過 fetch 把新資料傳給 GAS API
+        try {
+          const res = await fetch(API_URL, {
+            method: 'POST',
+            body: JSON.stringify({
+              action: "addPrompt",
+              password: formValues.pass,
+              title: formValues.title,
+              category: formValues.cat,
+              content: formValues.content
+            })
+          });
+          const result = await res.json();
+          
+          if (result.success) {
+            Swal.fire('成功！', '咒語已經收納進試算表囉！', 'success');
+            renderData(result.data); // 重新渲染最新畫面
+          } else {
+            Swal.fire('失敗', result.msg, 'error');
+          }
+        } catch (e) {
+          Swal.fire('錯誤', '網路異常，請稍後再試', 'error');
+        }
+      }
+    }
+  </script>
+</body>
+</html>
